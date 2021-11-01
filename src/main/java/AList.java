@@ -1,41 +1,60 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-/** Даем нашему класу наследовать готовый список, объявляем массив, который содержит объекты и называем его.
-//Кол-во объектов равно нулю. И говорим, что вместимость у нас 12 ячейек, куда можно записать данные
+/** It is the realization of the ArrayList
+ * @param <E>
  */
 public class AList<E> implements List<E> {
-    public Object[] elements;
-    public int size = 0;
-    public static int defaultCapacity = 12;
+    /**
+     * In this array we store elements
+     */
+    private Object[] elements;
+    /**
+     * The number of elements in the array
+     */
+    private int size = 0;
+    /**
+     * Initial capacity of the array
+     */
+    private static int initialCapacity = 12;
+    /**
+     * Default capacity of the array
+     */
+    private static int defaultCapacity = 5;
 
-    //Говорим, что в массиве лежат объекты
-    public AList() {
-        elements = (E[]) new Object[defaultCapacity];
-    }
-    /** А это еще один список. В этот раз мы не задаем емкость, просто вводим переменную. Если она меньше равно нуля,
-    то пользователя попросит передать соответсвующий аргумент.
-    */
+    /**
+     * @param initialCapacity (must be not zero)
+     * @throws IllegalArgumentException
+     */
     public AList(int initialCapacity) {
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException();
         }
         elements = (E[]) new Object[initialCapacity];
     }
-    /** возвращает кол-во заполненных ячеек в массиве
-    */
-    public int size() {
-        return size;
+
+    public AList() {
+        elements = (E[]) new Object[defaultCapacity];
     }
 
-    /** с помощью метода можем проверить пустой массив или нет.
-    */
+    /**
+     * @return size
+     */
+    public int size() {
+
+        return size;
+    }
+    /**
+     * @return true if the container is empty
+     */
     public boolean isEmpty() {
         return size == 0;
-        }
-    /**Проверяем есть ли в массиве элементы, начиная от первого значения и до конца size (то есть все ячейки где есть
-    значение). Если там что-то есть - значит в массиве содержаться элементы.
-    */
+    }
+    /**
+     * @param element The object with same type as E
+     * @return true, if the collection contains the incoming object
+     * Method uses the equals method
+     */
     public boolean contains(Object element) {
         for (int i = 0; i < size; i++) {
             if (element.equals((Object) elements[i])) {
@@ -45,64 +64,79 @@ public class AList<E> implements List<E> {
         return false;
     }
     /**
-    У меня отдельным класом Итератор Итер, наследующий метод Итератор. Позволяет пройтись по массиву, и с помощью
-    методов получить значение (next) и узнать есть ли следующее и не закончился ли массив (hasNext).
-   */
-     public Iterator <E> iterator() {
+     * @see {@link Iter} There is Iter, which describes Iterator
+     */
+    public Iterator<E> iterator() {
+
         return new Iter<E>((E[]) elements);
     }
-    /** Возвращаем массив
-    */
+    /**
+     * @return the new object E[]
+     */
     public Object[] toArray() {
-        return new Object[0];
+        return elements;
     }
-
+    /**
+     * @return null
+     */
     public <E> E[] toArray(E[] a) {
-        return null;
+        return (E[]) elements;
     }
-
-    /**Удаляет элементы и у нас снова пустые ячейки.
-    */
+    /**
+     * Method deletes all elements of the array and reduce the capacity to the initial capacity
+     */
     public void clear() {
         size = 0;
         elements = (E[]) new Object[defaultCapacity];
 
     }
-    /**Если нужно вытащить какое-то значение по индексу, просим сделать это.
-    */
+    /**
+     * @param index
+     * @return the element by the index
+     */
     public E get(int index) {
-        return (E) elements [index];
-    }
 
-    /**Указываем новый индекс и замещаем один элемент другим.
-    */
+        return (E) elements[index];
+    }
+    /**
+     * @param index
+     * @return the element
+     */
     public E set(int index, E element) {
         elements[index] = element;
         return element;
     }
-    /**Проверяем можем ли дальше добавлять значния в массив.
-    */
+    /**
+     * @param element
+     * @return false
+     */
     public boolean add(E element) {
-        elements[size] = element;
-        size++;
-        return false;
-    }
-
-    /**Добавление по индексу. Проверяем достаточно ли места для добавления нового значения в средину списка и делаем
-    ресайз если нужно. Вырезаем значения начиная с нужного места и вставляем значение на ячейку дальше.
-    */
-    public void add(int index, E element) {
-        if (index < 0 || index >= elements.length) {
+        if (elements.length == size) {
             resize();
         }
-        System.arraycopy(elements, index, elements, index+1, size-index);
+        elements[size] = element;
+        size++;
+        return true;
+    }
+    /**
+     * @param index
+     * @param element
+     * Resize the array if the length of the array is full
+     */
+    public void add(int index, E element) {
+        if (index >= elements.length) {
+            resize();
+        }
         elements[index] = element;
         size++;
     }
-    /**Удаляем элемент по индексу и смещаем все значение на место удаленного элемента.
-    */public E remove(int index) {
+    /**
+     * @param index of the element, which will be removed
+     * @return element by index
+     */
+    public E remove(int index) {
         E removedElement = (E) elements[index];
-        System.arraycopy(elements, index+1, elements, index, size - index - 1);
+        System.arraycopy(elements, index + 1, elements, index, size - index - 1);
         size--;
         return removedElement;
     }
@@ -132,6 +166,7 @@ public class AList<E> implements List<E> {
     public List<E> subList(int fromIndex, int toIndex) {
         return null;
     }
+
     @Override
     public boolean remove(Object o) {
         return false;
@@ -162,51 +197,37 @@ public class AList<E> implements List<E> {
         return false;
     }
 
-    /**Меняем длинну массива. В случае, если длинна (все ячейки) заполнена, то создаем новый масив temp,
-    длинна которого в два раза больше нашего прежнего масива. Дальше закоментировано кусок кода - более простой путь.
-    Так мы вызываем метод, который копирует наш массив (прежний масив, ячейка с которой начинаем копироватьб новый
-    массив, опять значение с которого начинаем записывать и размер). И приравниваем прежний массив к новому.
-    Или все то же самое через for. Пока любое значение меньше длинны массива - записываем в след. ячейку. Но если уже
-    некуда (!= значит не равно), то берем новый массив, куда должны попасть все объекты c предыдущего.
-    */
-    private void resize () {
+    /**
+     * Describes the way we can make a resize ot the array
+     */
+    private void resize() {
         if (elements.length == size) {
             Object[] temp = new Object[elements.length * 2];
-            //System.arraycopy(elements, 0, temp, 0, size);
-            // elements = temp;
-            for (int i = 0; i < elements.length; i++) {
-                if (elements[i] != null) {
-                    temp[i] = elements[i];
-                    elements = (E[]) temp;
+            System.arraycopy(elements, 0, temp, 0, size);
+            elements = temp;
                 }
             }
-        }
-    }
 
+    /**
+     * @return the new array E[] and it's size
+     */
     @Override
     public String toString() {
         return "Наш массив: " + Arrays.toString(elements) +
                 ", кол-во заполненных ячеек = " + size;
     }
 
-    /** Создаем и называем метод
+    /**
+     * Method realize bubbleSort algorithm
+     *
+     * @return The sorted array
      */
     public void bubbleSort() {
-        /** Определяем, что для нас значит "отсортировано"
-         * если список не отсортирован - приступаем к сортировке пока он не станет отсортирован
-         * если хоть одна сортировка состоялась, сбрасываем в false (нижняя строка в цикле)
-         */
         boolean isSorted = false;
         while (!isSorted) {
             isSorted = true;
-            /**определяем с чем работаем (значение, сравнение с кол-вом заполненных ячеек, переход в следующую)
-             */
             for (int i = 1; i < this.size; i++) {
-
-                /**если значение в ячейке меньше соседней, то берем временную инт и присваиваем ей меньшее значение
-                 * делаем замену: вместо одного порядка следования устанавливаем противоположный
-                 */
-                if (((Comparable)this.get(i)).compareTo((Comparable)(this.get(i - 1))) < 0){
+                if (((Comparable) this.get(i)).compareTo((Comparable) (this.get(i - 1))) < 0) {
                     Object temp = this.get(i);
                     this.set(i, this.get(i - 1));
                     this.set(i - 1, (E) temp);
@@ -216,6 +237,8 @@ public class AList<E> implements List<E> {
             System.out.println(this.toString()); //Выводим значения массива
         }
     }
+
+}
 
 
    /*
@@ -271,4 +294,4 @@ public class AList<E> implements List<E> {
         }
     }*/
 
-}
+

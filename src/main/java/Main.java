@@ -4,14 +4,14 @@ import java.util.Comparator;
 
 public class Main {
     public static void main(String[] args) {
-        AList<Integer> arr1 = new AList<Integer>();
+        AList<Integer> arr1 = new AList<Integer>(1);
 
         arr1.add(9);
         arr1.add(15);
         arr1.add(61);
         arr1.add(45);
         arr1.add(70);
-        arr1.remove(4);
+        //arr1.remove(4);
         arr1.add(90);
         arr1.add(111);
         arr1.add(7);
